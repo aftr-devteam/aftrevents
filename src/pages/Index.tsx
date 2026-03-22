@@ -345,6 +345,15 @@ function ThisWeek() {
                     >
                       {event.is_free ? t("Free", "Gratis") : `€${event.price_euros}`}
                     </span>
+                  </Link>
+                );
+              })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── EVENT SERIES CAROUSEL ────────────────────────────────────
 
 function EventSeriesSection() {
