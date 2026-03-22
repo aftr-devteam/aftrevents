@@ -61,8 +61,7 @@ export default function OrganizerStatus() {
   useEffect(() => {
     if (!authLoading && user) {
       Promise.all([getMyApplication(), getMySubscription()]).then(([a, s]) => {
-        if (!a) { navigate("/organizer/apply", { replace: true }); return; }
-        setApp(a);
+        setApp(a);    // null is fine — we handle it below
         setSub(s);
         setLoading(false);
       });
@@ -129,7 +128,29 @@ export default function OrganizerStatus() {
     );
   }
 
-  if (!app) return null;
+  if (!app) return (
+    <div className="min-h-screen bg-background flex items-center justify-center section-padding">
+      <div className="max-w-md w-full text-center">
+        <div className="text-5xl mb-4">📋</div>
+        <h2 className="font-heading text-2xl font-bold text-foreground mb-3">
+          No application found
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          You haven't applied to become a Builder yet. Start your application to get your events in front of 2,220+ Aftr members.
+        </p>
+        <Link to="/apply-role?role=builder">
+          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+            Apply as Builder →
+          </Button>
+        </Link>
+        <div className="mt-4">
+          <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            ← Back to dashboard
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 
   const statusLabel = APPLICATION_STATUS_LABELS[app.status];
 
