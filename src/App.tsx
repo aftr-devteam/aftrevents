@@ -15,8 +15,6 @@ import Collaborate        from "./pages/Collaborate";
 import NotFound           from "./pages/NotFound";
 
 // ── Legacy (keep — old links may still point here) ────────────
-import Collaborators      from "./pages/Collaborators";
-import BecomeCollaborator from "./pages/BecomeCollaborator";
 
 // ── Auth ─────────────────────────────────────────────────────
 import Login      from "./pages/auth/Login";
@@ -74,8 +72,6 @@ const App = () => (
           <Route path="/builders-connectors" element={<BuildersConnectors />} />
           <Route path="/community-builders"  element={<BuildersConnectors />} />
           <Route path="/collaborate"         element={<Collaborate />} />
-          <Route path="/collaborators"       element={<Collaborators />} />
-          <Route path="/become-collaborator" element={<BecomeCollaborator />} />
 
           {/* ── Auth ───────────────────────────────────────── */}
           <Route path="/login"      element={<Login />} />
