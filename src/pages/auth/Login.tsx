@@ -53,7 +53,7 @@ export default function Login() {
         .eq("id", data.user.id)
         .single();
 
-      // Always go to dashboard — it handles role-based routing internally
+      // Dashboard handles all role-based routing internally
       navigate("/dashboard", { replace: true });
     }
   }
