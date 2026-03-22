@@ -166,14 +166,23 @@ function TrustStrip() {
 
 // ─── FEATURED EVENTS ──────────────────────────────────────────
 
+// Generic discovery categories — what people actually search for,
+// not Aftr's internal brand names. Maps to category_key in the DB.
 const CATEGORIES = [
-  { key: "all",     labelEn: "All events",       labelEs: "Todos" },
-  { key: "chat",    labelEn: "Chat & Mingle",    labelEs: "Chat & Mingle" },
-  { key: "digital", labelEn: "Digital Builders", labelEs: "Digital Builders" },
-  { key: "lingo",   labelEn: "Lingo Connect",    labelEs: "Lingo Connect" },
-  { key: "hub",     labelEn: "Hub Cultural",      labelEs: "Hub Cultural" },
-  { key: "unplug",  labelEn: "Unplug & Play",    labelEs: "Unplug & Play" },
+  { key: "all",      labelEn: "All",               labelEs: "Todos" },
+  { key: "social",   labelEn: "Social & Meetups",  labelEs: "Social y Meetups",   dbKeys: ["chat"] },
+  { key: "tech",     labelEn: "Tech & Digital",    labelEs: "Tech y Digital",      dbKeys: ["digital"] },
+  { key: "language", labelEn: "Language Exchange", labelEs: "Intercambio de idiomas", dbKeys: ["lingo"] },
+  { key: "arts",     labelEn: "Arts & Culture",    labelEs: "Arte y Cultura",      dbKeys: ["hub"] },
+  { key: "outdoor",  labelEn: "Outdoor & Active",  labelEs: "Aire libre y Deporte",dbKeys: ["unplug"] },
 ];
+
+// Maps generic filter key → DB category_key(s) for the query
+function categoryKeyForFilter(key: string): string | undefined {
+  if (key === "all") return undefined;
+  const cat = CATEGORIES.find(c => c.key === key);
+  return cat?.dbKeys?.[0];
+}
 
 function FeaturedEvents() {
   const { ref, isVisible } = useScrollReveal();
@@ -184,7 +193,7 @@ function FeaturedEvents() {
 
   const filters: EventFilters = {
     limit: 6,
-    ...(activeCategory !== "all" && { categoryKey: activeCategory }),
+    ...(activeCategory !== "all" && { categoryKey: categoryKeyForFilter(activeCategory) }),
     ...(showFree !== null && { isFree: showFree }),
   };
 
@@ -336,24 +345,22 @@ function ThisWeek() {
                     >
                       {event.is_free ? t("Free", "Gratis") : `€${event.price_euros}`}
                     </span>
-                  </Link>
-                );
-              })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── EVENT SERIES ─────────────────────────────────────────────
+// ─── EVENT SERIES CAROUSEL ────────────────────────────────────
 
 function EventSeriesSection() {
   const { ref, isVisible } = useScrollReveal();
   const { t, lang } = useLang();
+  const [active, setActive] = useState(0);
+
+  const series = eventSeries;
+  const current = series[active];
+  if (!current) return null;
 
   return (
     <section ref={ref} className="py-16 lg:py-24 section-padding bg-warm-gradient">
       <div className={`max-w-7xl mx-auto ${isVisible ? "animate-reveal-up" : "opacity-0"}`}>
+
+        {/* Header */}
         <div className="text-center mb-12">
           <p className="text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-3">
             {t("Aftr Social Club", "Aftr Social Club")}
@@ -361,23 +368,132 @@ function EventSeriesSection() {
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground" style={{ lineHeight: 1.15 }}>
             {t("5 formats. All year round.", "5 formatos. Todo el año.")}
           </h2>
+          <p className="text-muted-foreground text-lg mt-4 max-w-xl mx-auto">
+            {t(
+              "Recurring events you can come back to every week or month.",
+              "Eventos recurrentes a los que puedes volver cada semana o mes."
+            )}
+          </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {eventSeries.map((series, i) => (
-            <Link
-              key={series.id}
-              to={`/events?category=${series.categoryKey}`}
-              className={`group bg-popover rounded-2xl p-6 border border-border hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col ${
-                isVisible ? `animate-reveal-up stagger-${Math.min(i + 1, 6)}` : "opacity-0"
-              }`}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="text-3xl">{series.emoji}</div>
-                <div className="w-3 h-3 rounded-full mt-1" style={{ background: series.color }} />
+
+        {/* Carousel */}
+        <div className="bg-popover rounded-3xl border border-border overflow-hidden shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[380px]">
+
+            {/* Left: photo */}
+            <div className="relative overflow-hidden bg-muted min-h-[240px] lg:min-h-0">
+              {/* Color overlay matching series */}
+              <div
+                className="absolute inset-0 transition-colors duration-500"
+                style={{ background: `${current.color}22` }}
+              />
+              {/* Placeholder visual — replace with real event photos */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                <div
+                  className="w-28 h-28 rounded-3xl flex items-center justify-center text-6xl shadow-xl"
+                  style={{ background: `${current.color}18`, border: `2px solid ${current.color}30` }}
+                >
+                  {current.emoji}
+                </div>
+                <div
+                  className="text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full"
+                  style={{ background: `${current.color}15`, color: current.color }}
+                >
+                  {lang === "en" ? current.frequency : current.frequencyEs}
+                </div>
               </div>
-              <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: series.color }}>
-                {lang === "en" ? series.frequency : series.frequencyEs}
+              {/* Add a real cover image by setting series.coverImage in eventData.ts:
+                  {current.coverImage && (
+                    <img src={current.coverImage} alt="" className="w-full h-full object-cover" />
+                  )} */}
+            </div>
+
+            {/* Right: info */}
+            <div className="p-8 lg:p-10 flex flex-col justify-between">
+              <div>
+                <div
+                  className="text-xs font-bold uppercase tracking-[0.2em] mb-3"
+                  style={{ color: current.color }}
+                >
+                  {lang === "en" ? current.frequency : current.frequencyEs}
+                </div>
+                <h3 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mb-3" style={{ lineHeight: 1.15 }}>
+                  {lang === "en" ? current.name : current.nameEs}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  {lang === "en" ? current.description : current.descriptionEs}
+                </p>
+
+                {/* Quick info pills */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {[
+                    { icon: "📅", label: lang === "en" ? current.frequency : current.frequencyEs },
+                    { icon: "📍", label: "Alicante & Elche" },
+                    { icon: "🆓", label: t("Free to attend", "Gratis para asistir") },
+                  ].map((pill, i) => (
+                    <span
+                      key={i}
+                      className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-muted text-foreground font-medium"
+                    >
+                      <span>{pill.icon}</span>
+                      {pill.label}
+                    </span>
+                  ))}
+                </div>
+
+                <Link to={`/events?category=${current.categoryKey ?? current.id}`}>
+                  <button
+                    className="flex items-center gap-2 font-semibold text-sm transition-colors"
+                    style={{ color: current.color }}
+                  >
+                    {t("Browse upcoming dates", "Ver próximas fechas")}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
               </div>
+
+              {/* Dot navigation */}
+              <div className="flex items-center gap-3 mt-8">
+                {series.map((s, i) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setActive(i)}
+                    title={lang === "en" ? s.name : s.nameEs}
+                    className="flex items-center gap-2 transition-all duration-200"
+                  >
+                    <div
+                      className="rounded-full transition-all duration-300 flex items-center justify-center"
+                      style={{
+                        width:  i === active ? "2.5rem" : "2rem",
+                        height: i === active ? "2.5rem" : "2rem",
+                        background: i === active ? current.color : "hsl(var(--muted))",
+                        fontSize: i === active ? "1rem" : "0.8rem",
+                      }}
+                    >
+                      {s.emoji}
+                    </div>
+                  </button>
+                ))}
+                <span className="ml-auto text-xs text-muted-foreground">
+                  {active + 1} / {series.length}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center mt-8">
+          <Link to="/community">
+            <button className="text-sm font-semibold text-primary hover:underline flex items-center gap-1 mx-auto">
+              {t("Learn about membership", "Conocer membresía")}
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
               <h3 className="font-heading text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                 {lang === "en" ? series.name : series.nameEs}
               </h3>
