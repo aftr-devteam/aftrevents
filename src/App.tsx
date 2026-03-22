@@ -17,10 +17,11 @@ import NotFound           from "./pages/NotFound";
 // ── Legacy (keep — old links may still point here) ────────────
 
 // ── Auth ─────────────────────────────────────────────────────
-import Login      from "./pages/auth/Login";
-import Register   from "./pages/auth/Register";
-import Onboarding from "./pages/Onboarding";
+import Login         from "./pages/auth/Login";
+import Register      from "./pages/auth/Register";
+import Onboarding    from "./pages/Onboarding";
 import ResetPassword from "./pages/auth/ResetPassword";
+import VerifyEmail   from "./pages/auth/VerifyEmail";
 
 // ── Member ───────────────────────────────────────────────────
 import Dashboard      from "./pages/Dashboard";
@@ -75,10 +76,11 @@ const App = () => (
           <Route path="/collaborate"         element={<Collaborate />} />
 
           {/* ── Auth ───────────────────────────────────────── */}
-          <Route path="/login"      element={<Login />} />
-          <Route path="/register"   element={<Register />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/login"          element={<Login />} />
+          <Route path="/register"        element={<Register />} />
+          <Route path="/onboarding"      element={<Onboarding />} />
+          <Route path="/reset-password"  element={<ResetPassword />} />
+          <Route path="/verify-email"    element={<VerifyEmail />} />
 
           {/* ── Member ─────────────────────────────────────── */}
           <Route path="/dashboard"        element={<Dashboard />} />
