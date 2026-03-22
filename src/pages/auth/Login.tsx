@@ -38,7 +38,8 @@ export default function Login() {
       if (authError.message.includes("Invalid login credentials")) {
         setError("Wrong email or password. Please try again.");
       } else if (authError.message.includes("Email not confirmed")) {
-        setError("Please check your inbox and verify your email before signing in.");
+        // Send them to verify page with email pre-filled
+        navigate("/verify-email", { state: { email } });
       } else {
         setError(authError.message);
       }
