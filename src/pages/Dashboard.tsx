@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   CalendarDays, Heart, Users, ArrowRight,
   Settings, PlusCircle, Clock, MapPin,
@@ -229,6 +229,14 @@ export default function Dashboard() {
   const [rsvps,   setRsvps]   = useState<any[]>([]);
   const [saves,   setSaves]   = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
+
+  // Determine active tab from URL
+  const activeTab =
+    location.pathname === "/dashboard/rsvps"  ? "rsvps"  :
+    location.pathname === "/dashboard/saved"  ? "saved"  :
+    location.pathname === "/dashboard/circle" ? "circle" :
+    "home";
 
   useEffect(() => {
     if (!user) return;
@@ -291,6 +299,9 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout profile={profile}>
+
+    {/* ── TAB: Home (default) ── */}
+    {activeTab === "home" && (<>
 
       {/* Greeting */}
       <div className="mb-8 flex items-start justify-between gap-4">
@@ -562,6 +573,120 @@ export default function Dashboard() {
           </Link>
         ))}
       </div>
+
+    </> )}
+
+    {/* ── TAB: All RSVPs ── */}
+    {activeTab === "rsvps" && (
+      <>
+        <div className="flex items-center gap-3 mb-6">
+          <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">← {t("Dashboard", "Dashboard")}</Link>
+          <span className="text-muted-foreground">/</span>
+          <h1 className="font-heading text-xl font-bold text-foreground">{t("My RSVPs", "Mis RSVPs")}</h1>
+        </div>
+        {rsvps.length === 0 ? (
+          <div className="bg-muted/40 rounded-2xl border border-border px-6 py-16 text-center">
+            <CalendarDays className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-40" />
+            <p className="text-sm text-muted-foreground mb-4">{t("No upcoming RSVPs.", "Sin RSVPs próximos.")}</p>
+            <Link to="/events"><Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">{t("Browse events →", "Ver eventos →")}</Button></Link>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {rsvps.map((event: any) => {
+              const d = new Date(event.event_date);
+              return (
+                <Link key={event.id} to={`/events/${event.id}`}
+                  className="flex items-center gap-4 bg-popover border border-border rounded-2xl px-4 py-3 hover:shadow-md hover:border-primary/30 transition-all group">
+                  <div className="w-12 text-center flex-shrink-0">
+                    <div className="text-xs font-bold text-muted-foreground">{d.toLocaleDateString("en-GB", { weekday: "short" }).toUpperCase()}</div>
+                    <div className="font-heading text-xl font-bold text-foreground leading-none">{d.getDate()}</div>
+                    <div className="text-xs text-muted-foreground">{d.toLocaleDateString("en-GB", { month: "short" })}</div>
+                  </div>
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+                    {event.cover_image_url ? <img src={event.cover_image_url} className="w-full h-full object-cover" alt="" /> : <div className="w-full h-full flex items-center justify-center text-xl opacity-30">📅</div>}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">{event.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />{event.start_time?.slice(0,5)}<span className="mx-1">·</span><MapPin className="w-3 h-3" />{event.venue_name}
+                    </p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary flex-shrink-0 transition-colors" />
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </>
+    )}
+
+    {/* ── TAB: Saved events ── */}
+    {activeTab === "saved" && (
+      <>
+        <div className="flex items-center gap-3 mb-6">
+          <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">← {t("Dashboard", "Dashboard")}</Link>
+          <span className="text-muted-foreground">/</span>
+          <h1 className="font-heading text-xl font-bold text-foreground">{t("Saved events", "Eventos guardados")}</h1>
+        </div>
+        {saves.length === 0 ? (
+          <div className="bg-muted/40 rounded-2xl border border-border px-6 py-16 text-center">
+            <Heart className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-40" />
+            <p className="text-sm text-muted-foreground mb-4">{t("No saved events yet. Tap the heart on any event to save it.", "Sin eventos guardados. Pulsa el corazón en cualquier evento para guardarlo.")}</p>
+            <Link to="/events"><Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">{t("Browse events →", "Ver eventos →")}</Button></Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {saves.map((event: any) => (
+              <Link key={event.id} to={`/events/${event.id}`}
+                className="group bg-popover border border-border rounded-2xl overflow-hidden hover:shadow-md hover:border-primary/30 transition-all">
+                <div className="aspect-video bg-muted overflow-hidden">
+                  {event.cover_image_url
+                    ? <img src={event.cover_image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="" />
+                    : <div className="w-full h-full flex items-center justify-center text-3xl opacity-20">📅</div>
+                  }
+                </div>
+                <div className="p-4">
+                  <p className="font-semibold text-sm text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-snug mb-1">{event.title}</p>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{new Date(event.event_date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>
+                    <span className="font-semibold" style={event.is_free ? { color: "#4b664a" } : { color: "#b85c24" }}>
+                      {event.is_free ? t("Free", "Gratis") : `€${event.price_euros}`}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </>
+    )}
+
+    {/* ── TAB: My Circle ── */}
+    {activeTab === "circle" && (
+      <>
+        <div className="flex items-center gap-3 mb-6">
+          <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">← {t("Dashboard", "Dashboard")}</Link>
+          <span className="text-muted-foreground">/</span>
+          <h1 className="font-heading text-xl font-bold text-foreground">{t("My Aftr Circle", "Mi Círculo Aftr")}</h1>
+        </div>
+        <div className="bg-muted/40 rounded-2xl border border-border px-6 py-16 text-center">
+          <Users className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-40" />
+          <p className="font-semibold text-foreground mb-1">{t("Your circle is empty", "Tu círculo está vacío")}</p>
+          <p className="text-sm text-muted-foreground mb-5">
+            {t(
+              "Visit someone's profile and tap 'Add to my Aftr Circle' to connect.",
+              "Visita el perfil de alguien y pulsa 'Añadir a mi Círculo Aftr' para conectar."
+            )}
+          </p>
+          <Link to="/builders-connectors">
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              {t("Meet the community →", "Conoce la comunidad →")}
+            </Button>
+          </Link>
+        </div>
+      </>
+    )}
+
     </DashboardLayout>
   );
 }
