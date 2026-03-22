@@ -106,7 +106,7 @@ export default function Register() {
               <input
                 type="text"
                 {...field("fullName")}
-                placeholder="Joana Faye Beriso"
+                placeholder="John Doe"
                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
               />
               {errors.fullName && <p className="text-xs text-destructive mt-1">{errors.fullName}</p>}
