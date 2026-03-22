@@ -45,6 +45,7 @@ export default function Register() {
           full_name: form.fullName,
           phone: form.phone,
         },
+        emailRedirectTo: `${window.location.origin}/verify-email`,
       },
     });
 
@@ -60,7 +61,7 @@ export default function Register() {
     }
 
     setSuccess(true);
-    setTimeout(() => navigate("/organizer/apply", { replace: true }), 2000);
+    setTimeout(() => navigate("/verify-email", { replace: true, state: { email: form.email } }), 2000);
   }
 
   const field = (key: keyof typeof form) => ({
@@ -75,7 +76,7 @@ export default function Register() {
         <div className="w-full max-w-md text-center">
           <div className="text-5xl mb-4">🎉</div>
           <h2 className="font-heading text-2xl font-bold text-foreground mb-2">Account created!</h2>
-          <p className="text-muted-foreground">Taking you to your application…</p>
+          <p className="text-muted-foreground">Check your inbox — we sent you a verification link.</p>
         </div>
       </div>
     );
