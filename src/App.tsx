@@ -20,6 +20,7 @@ import NotFound           from "./pages/NotFound";
 import Login      from "./pages/auth/Login";
 import Register   from "./pages/auth/Register";
 import Onboarding from "./pages/Onboarding";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 // ── Member ───────────────────────────────────────────────────
 import Dashboard      from "./pages/Dashboard";
@@ -77,6 +78,7 @@ const App = () => (
           <Route path="/login"      element={<Login />} />
           <Route path="/register"   element={<Register />} />
           <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* ── Member ─────────────────────────────────────── */}
           <Route path="/dashboard"        element={<Dashboard />} />
