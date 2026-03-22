@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Globe, LogIn, UserCircle, LayoutDashboard, Shield, LogOut, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
+import AftrLogo from "@/components/AftrLogo";
 import { useLang } from "@/lib/i18n";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,11 +97,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto section-padding flex items-center justify-between h-16 lg:h-[4.5rem]">
 
         {/* ── LOGO ── */}
-        <NavLink
-          to="/"
-          className={`font-heading text-xl font-bold tracking-tight transition-colors ${logoCls}`}
-        >
-          Aftr<span className={solid ? "text-primary" : "opacity-60"}>.</span>
+        <NavLink to="/" aria-label="Aftr — home">
+          <AftrLogo className={`h-7 w-auto transition-colors duration-300 ${logoCls}`} />
         </NavLink>
 
         {/* ── DESKTOP NAV ── */}
