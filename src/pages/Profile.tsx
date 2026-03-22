@@ -50,19 +50,21 @@ export default function Profile() {
   const [saving, setSaving]       = useState(false);
   const [saved, setSaved]         = useState(false);
   const [error, setError]         = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
+  const fileRef      = useRef<HTMLInputElement>(null);
+  const initialised  = useRef(false); // ← guard: only pre-fill once
 
-  // Pre-fill from existing profile
+  // Pre-fill from existing profile — runs once when profile first loads
   useEffect(() => {
-    if (profile) {
+    if (profile && !initialised.current) {
+      initialised.current = true;
       setForm({
-        fullName:    profile.full_name    ?? "",
-        phone:       profile.phone        ?? "",
-        bio:         profile.bio          ?? "",
-        nationality: profile.nationality  ?? "",
-        city:        profile.city         ?? "Alicante",
+        fullName:    profile.full_name        ?? "",
+        phone:       profile.phone            ?? "",
+        bio:         profile.bio              ?? "",
+        nationality: profile.nationality      ?? "",
+        city:        profile.city             ?? "Alicante",
         instagram:   profile.instagram_handle ?? "",
-        linkedin:    profile.linkedin_url ?? "",
+        linkedin:    profile.linkedin_url     ?? "",
       });
       setAvatarUrl(profile.avatar_url ?? null);
     }
