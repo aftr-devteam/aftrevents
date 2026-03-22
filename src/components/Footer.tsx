@@ -1,6 +1,7 @@
 import { Instagram, Linkedin, Mail } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLang } from "@/lib/i18n";
+import AftrLogo from "@/components/AftrLogo";
 
 export default function Footer() {
   const { t } = useLang();
@@ -15,10 +16,8 @@ export default function Footer() {
 
           {/* ── BRAND ── */}
           <div>
-            <NavLink to="/" className="inline-block mb-4">
-              <h3 className="font-heading text-2xl font-bold text-sand-light">
-                Aftr<span className="text-primary">.</span>
-              </h3>
+            <NavLink to="/" className="inline-block mb-5">
+              <AftrLogo className="h-7 w-auto text-sand-light" />
             </NavLink>
             <p className="text-sand/65 text-sm leading-relaxed mb-5">
               {t(
