@@ -503,33 +503,6 @@ function EventSeriesSection() {
     </section>
   );
 }
-              <h3 className="font-heading text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                {lang === "en" ? series.name : series.nameEs}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-2">
-                {lang === "en" ? series.description : series.descriptionEs}
-              </p>
-              <div className="flex items-center justify-between mt-5">
-                <span className="text-xs font-semibold text-primary">
-                  {t("Browse events", "Ver eventos")}
-                </span>
-                <ArrowRight className="w-4 h-4 text-primary opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-              </div>
-            </Link>
-          ))}
-        </div>
-        <div className="text-center mt-10">
-          <Link to="/community">
-            <Button variant="outline" size="lg">
-              {t("Learn about membership", "Conocer membresía")}
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ─── FOR WHOM ─────────────────────────────────────────────────
 
